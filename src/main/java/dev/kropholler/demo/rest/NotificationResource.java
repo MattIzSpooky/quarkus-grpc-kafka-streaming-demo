@@ -10,26 +10,26 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.eclipse.microprofile.reactive.messaging.Emitter;
+import io.smallrye.reactive.messaging.MutinyEmitter;
 
 @Path("/notifications")
 @ApplicationScoped
 public class NotificationResource {
     @Inject
-    @Channel("notifications-out")
-    Emitter<String> emitter;
+    @Channel("notifications-create")
+    MutinyEmitter<String> emitter;
 
     @Inject
     ObjectMapper mapper;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Uni<Response> send(final NotificationEvent request) throws JsonProcessingException {
+    public Uni<String> send(final NotificationEvent request) throws JsonProcessingException {
         final var json = mapper.writeValueAsString(request);
 
-        return Uni.createFrom().completionStage(emitter.send(json))
-                .replaceWith(Response.accepted().build());
+        return emitter.send(json)
+                .map(x -> "ok")
+                .onFailure().recoverWithItem("ko");
     }
 }

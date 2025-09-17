@@ -24,7 +24,7 @@ public class NotificationKafkaConsumer {
      * Because each Quarkus instance has a unique consumer-group id, every instance receives every message.
      * We forward only to local connections inside NotificationGrpcService.
      */
-    @Incoming("notifications-in")
+    @Incoming("notifications-read")
     @Blocking
     public void consume(String json) {
         try {
