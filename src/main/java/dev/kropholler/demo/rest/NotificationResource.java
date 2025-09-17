@@ -24,12 +24,12 @@ public class NotificationResource {
     ObjectMapper mapper;
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
     public Uni<String> send(final NotificationEvent request) throws JsonProcessingException {
         final var json = mapper.writeValueAsString(request);
 
         return emitter.send(json)
                 .map(x -> "ok")
-                .onFailure().recoverWithItem("ko");
+                .onFailure().recoverWithItem("failed");
     }
 }
