@@ -1,0 +1,19 @@
+@startuml
+|User|
+start
+:register at server;
+|#AntiqueWhite|Server|
+:open gRPC server-side stream;
+|User|
+:listen to stream;
+:send HTTP request;
+|Server|
+:forward message to Notifications topic;
+|Kafka|
+:forward message from Notifications topic to consumer;
+|Server|
+:consume message from Notifications topic;
+:send message to user using server-side stream;
+|User|
+:receive message;
+@enduml
